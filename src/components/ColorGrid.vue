@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import ColorSwatch from './ColorSwatch.vue'
-import type { ColorSwatch as ColorSwatchType } from '../types/color'
-
-// Props for managing grid state
-defineProps<{
-  colors: ColorSwatchType[]
-  loading: boolean
-  error: string | null
-}>()
-</script>
-
 <template>
   <div class="grid-container">
     <!-- Loading State -->
@@ -24,7 +12,7 @@ defineProps<{
     </div>
 
     <!-- Success State: Grid of Colors -->
-    <div v-else-if="colors.length > 0" class="color-grid">
+    <div v-else-if="colors.length" class="color-grid">
       <ColorSwatch
         v-for="color in colors"
         :key="color.name"
@@ -39,16 +27,26 @@ defineProps<{
   </div>
 </template>
 
+<script setup lang="ts">
+import ColorSwatch from './ColorSwatch.vue'
+import type { ColorSwatch as ColorSwatchType } from '../types/color'
+
+// Props for managing grid state
+defineProps<{
+  colors: ColorSwatchType[]
+  loading: boolean
+  error: string | null
+}>()
+</script>
+
 <style scoped>
 .grid-container {
   min-height: 200px;
 }
 
-/* Responsive CSS Grid */
+/* CSS Grid - responsive */
 .color-grid {
   display: grid;
-  /* auto-fit: creates as many columns as will fit
-     minmax(150px, 1fr): each column is min 150px, max equal fraction */
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 16px;
   width: 100%;

@@ -28,7 +28,6 @@ export function useColorAPI() {
 
     // Check cache first
     if (colorCache.has(cacheKey)) {
-      console.log(`[Cache HIT] Using cached results for S=${saturation}%, L=${lightness}%`)
       colors.value = colorCache.get(cacheKey)!
       return
     }
@@ -96,40 +95,6 @@ export function useColorAPI() {
     } finally {
       loading.value = false
     }
-  }
-
-  /**
-   * Deduplicate API responses by color name
-   * Only keeps the first occurrence of each unique color name
-   *
-   * @param responses - Array of API responses
-   * @returns Array of unique ColorSwatch objects
-   */
-  function deduplicateByName(responses: ColorAPIResponse[]): ColorSwatch[] {
-    const seen = new Set<string>()
-    const unique: ColorSwatch[] = []
-
-    for (const response of responses) {
-      const colorName = response.name.value
-
-      // Skip if we've already seen this color name
-      if (seen.has(colorName)) {
-        continue
-      }
-
-      seen.add(colorName)
-      unique.push({
-        name: colorName,
-        rgb: {
-          r: response.rgb.r,
-          g: response.rgb.g,
-          b: response.rgb.b
-        },
-        hue: response.hsl.h
-      })
-    }
-
-    return unique
   }
 
   return {

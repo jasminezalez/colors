@@ -1,48 +1,6 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { ColorSwatch } from '../types/color'
-
-// Component props with TypeScript typing
-const props = defineProps<{
-  color: ColorSwatch
-}>()
-
-// Toast notification state
-const showToast = ref(false)
-
-// Computed property: automatically updates when props.color changes
-// Converts RGB object to CSS rgb() string
-const rgbString = computed(() => {
-  const { r, g, b } = props.color.rgb
-  return `rgb(${r}, ${g}, ${b})`
-})
-
-/**
- * Copy RGB value to clipboard and show toast notification
- * Uses the Clipboard API for modern browsers
- */
-async function copyColor() {
-  try {
-    // Copy to clipboard
-    await navigator.clipboard.writeText(rgbString.value)
-
-    // Show toast notification
-    showToast.value = true
-
-    // Hide toast after 2 seconds
-    setTimeout(() => {
-      showToast.value = false
-    }, 2000)
-  } catch (err) {
-    console.error('Failed to copy to clipboard:', err)
-    // Fallback: could show error toast here
-  }
-}
-</script>
-
 <template>
   <div class="color-swatch" @click="copyColor">
-    <!-- Color preview: dynamic background color -->
+    <!-- Color preview: dynamic bg color -->
     <div
       class="color-preview"
       :style="{ backgroundColor: rgbString }"
@@ -55,15 +13,58 @@ async function copyColor() {
       <p class="color-value">{{ rgbString }}</p>
       <span class="copy-hint">Click to copy</span>
     </div>
-
-    <!-- Toast notification with Vue transition -->
-    <Transition name="toast">
-      <div v-if="showToast" class="toast">
-        Copied {{ rgbString }}!
-      </div>
-    </Transition>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { ColorSwatch } from '../types/color'
+import { useToast } from '../composables/useToast'
+
+const props = defineProps<{
+  color: ColorSwatch
+}>()
+
+const { showToast } = useToast()
+
+/**
+ * Computed: RGB value as CSS string
+ * Converts RGB object {r, g, b} to "rgb(r, g, b)" format, this is included in the style binding
+ */
+const rgbString = computed(() => {
+  const { r, g, b } = props.color.rgb
+  return `rgb(${r}, ${g}, ${b})`
+})
+
+/**
+ * UX! Computed: Determine if the color is light enough to need dark text
+ * Uses perceived brightness formula (human eye is more sensitive to green)
+ * Returns true for light backgrounds, false for dark backgrounds
+ */
+const isLightTextColor = computed(() => {
+  const { r, g, b } = props.color.rgb
+  // Calculate perceived brightness (0-255)
+  // Formula: https://www.w3.org/TR/AERT/#color-contrast
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  // If brightness > 128, it's a light color
+  return brightness > 128
+})
+
+/**
+ * Copy RGB value to clipboard and show color-matched toast
+ */
+async function copyColor() {
+  try {
+    await navigator.clipboard.writeText(rgbString.value)
+    showToast(`Copied ${props.color.name}!`, {
+      backgroundColor: rgbString.value,
+      textColor: isLightTextColor.value ? 'black' : 'white'
+    })
+  } catch (err) {
+    console.error('Failed to copy to clipboard:', err)
+  }
+}
+</script>
 
 <style scoped>
 .color-swatch {
@@ -106,7 +107,7 @@ async function copyColor() {
   color: #666;
 }
 
-/* Copy hint - hidden by default, shown on hover */
+/* Copy hint, hidden by default, shown on hover */
 .copy-hint {
   display: block;
   font-size: 0.75rem;
@@ -118,37 +119,5 @@ async function copyColor() {
 
 .color-swatch:hover .copy-hint {
   opacity: 1;
-}
-
-/* Toast notification styles */
-.toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 24px;
-  background-color: #2c3e50;
-  color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  font-size: 0.9rem;
-  font-weight: 500;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-/* Vue Transition classes for toast */
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
-.toast-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
 }
 </style>
