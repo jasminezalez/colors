@@ -10,15 +10,26 @@ npm install
 
 # Start development server
 npm run dev
+
+# Run tests
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Build for production
+npm run build
 ```
 
 The app will be available at `http://localhost:5173`
 
 ## Design Choices
 
-I chose Vue 3 with TypeScript for type safety and developer experience (myself). The key performance optimization was reducing API calls from 360 to 36 by using 10° hue steps, combined with progressive rendering so colors appear as they arrive rather than waiting for all fetches. I implemented debounced sliders (500ms) to prevent excessive API calls during dragging, and added response caching for instant results when revisiting saturation/lightness combinations.
+Hi there, I'm Jasmine! 
 
-For UX, I added an analytics view showing color distribution and palette insights, plus export options (CSS variables, JSON) that make the tool practical for real design workflows (my thought was that this could be used by designers or devs when creating themes with colors). The unified toast system with color-matched backgrounds and smart text contrast provides visual feedback while maintaining accessibility (click on a color, get a toast matching that selected color and the text changes from white to black depending on the brightness). The grid uses CSS Grid with responsive sizing to efficiently use viewport space across all screen resolutions.
+I chose Vue 3 with TypeScript for type safety and developer experience (for myself). The key performance optimization was reducing API calls from 360 to 36 by using 10° hue steps, combined with progressive rendering so colors appear as they arrive rather than waiting for all fetches. I implemented debounced sliders (500ms) to prevent excessive API calls during dragging, and added response caching for instant results when revisiting saturation/lightness combinations.
+
+For UX, I added an analytics view showing color distribution and palette insights, plus export options (CSS variables, JSON) that make the tool practical for real design workflows (my thought was that this could be used by designers or devs when creating themes with colors). The unified toast system with color matched backgrounds and smart text contrast provides visual feedback while maintaining accessibility (click on a color, get a toast matching that selected color and the text changes from white to black depending on the brightness). The grid uses CSS Grid with responsive sizing to efficiently use viewport space across all screen resolutions.
 
 ## Features
 
@@ -30,7 +41,7 @@ For UX, I added an analytics view showing color distribution and palette insight
 - **Smart Caching** - Instant results for previously viewed S/L combinations (no API calls)
 - **Debounced Input** - Prevents excessive API calls during slider dragging (500ms delay)
 
-### Toast Notifications
+### Toast Notifications (a fun feature I chose to add)
 - **Color-Matched Backgrounds** - Toast notifications match the color you copied
 - **Smart Text Contrast** - Automatically uses black or white text based on background brightness
 - **Stacking System** - Multiple notifications stack vertically without overlapping
@@ -60,3 +71,4 @@ For UX, I added an analytics view showing color distribution and palette insight
 - TypeScript
 - Vite
 - The Color API
+- Vitest + Vue Test Utils (Testing)
