@@ -41,7 +41,7 @@ For UX, I added an analytics view showing color distribution and palette insight
 - **Smart Caching** - Instant results for previously viewed S/L combinations (no API calls)
 - **Debounced Input** - Prevents excessive API calls during slider dragging (500ms delay)
 
-### Toast Notifications (a fun feature I chose to add)
+### Toast Notifications
 - **Color-Matched Backgrounds** - Toast notifications match the color you copied
 - **Smart Text Contrast** - Automatically uses black or white text based on background brightness
 - **Stacking System** - Multiple notifications stack vertically without overlapping
